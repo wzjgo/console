@@ -73,9 +73,9 @@ class Credential extends React.Component {
   }
 
   getData(params) {
-    const { project_id, cluster } = this.props.match.params
+    const { devops, cluster } = this.props.match.params
     this.store.fetchList({
-      project_id,
+      devops,
       cluster,
       ...params,
     })
@@ -118,7 +118,7 @@ class Credential extends React.Component {
 
   handleCreate = () => {
     this.setState({ showCreate: false, showEdit: true })
-    this.handleFetch()
+    this.getData()
   }
 
   getColumns = () => [
@@ -149,10 +149,10 @@ class Credential extends React.Component {
     },
     {
       title: t('Created Time'),
-      dataIndex: 'create_time',
+      dataIndex: 'createTime',
       width: 20,
-      render: create_time =>
-        getLocalTime(create_time).format(`YYYY-MM-DD HH:mm:ss`),
+      render: createTime =>
+        getLocalTime(createTime).format(`YYYY-MM-DD HH:mm:ss`),
     },
   ]
 
@@ -165,7 +165,7 @@ class Credential extends React.Component {
       : null
 
     const isEmptyList = isLoading === false && total === 0 && data.length <= 0
-    const omitFilters = omit(filters, ['page', 'limit'])
+    const omitFilters = omit(filters, ['page', 'limit', 'sortBy'])
 
     if (isEmptyList) {
       return (
@@ -193,13 +193,13 @@ class Credential extends React.Component {
   }
 
   renderModals() {
-    const { project_id, cluster } = this.props.match.params
+    const { devops, cluster } = this.props.match.params
     return (
       <CreateModal
         visible={this.state.showCreate}
         onOk={this.handleCreate}
         onCancel={this.hideCreate}
-        project_id={project_id}
+        devops={devops}
         cluster={cluster}
       />
     )

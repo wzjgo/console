@@ -29,6 +29,10 @@ import styles from './index.scss'
 
 @observer
 export default class BitBucketForm extends GitHubForm {
+  state = {
+    isLoading: false,
+  }
+
   get scmType() {
     return 'bitbucket_server'
   }
@@ -42,11 +46,11 @@ export default class BitBucketForm extends GitHubForm {
 
   @action
   handlePasswordConfirm = async () => {
-    const { cluster, project_id } = this.props
+    const { cluster, devops } = this.props
     const data = this.tokenFormRef.current.getData()
     this.setState({ isLoading: true })
-    this.props.store
-      .creatBitBucketServers({ cluster, project_id, ...data })
+    await this.props.store
+      .creatBitBucketServers({ cluster, devops, ...data })
       .finally(() => {
         this.setState({ isLoading: false })
       })

@@ -186,7 +186,7 @@ client:
             - {
                 name: visibility,
                 title: Cluster Visibility,
-                authKey: 'cluster-settings',
+                authKey: cluster-settings,
                 multiCluster: true,
               }
             # - { name: members, title: Cluster Members }
@@ -195,14 +195,14 @@ client:
                 name: mail-server,
                 title: Mail Server,
                 icon: mail,
-                authKey: notification,
+                authKey: cluster-settings,
                 clusterModule: notification,
               }
             - {
                 name: log-collections,
                 title: Log Collections,
                 icon: file,
-                authKey: logging|events|auditing,
+                authKey: cluster-settings,
                 clusterModule: logging|events|auditing,
               }
 
@@ -281,7 +281,7 @@ client:
   projectNavs:
     - cate: 'project'
       items:
-        - { name: overview, title: Overview, icon: dashboard, skipAuth: true }
+        - { name: overview, title: Overview, icon: dashboard, authKey: 'services' }
         - name: app-workloads
           title: Application Workloads
           icon: appcenter
@@ -306,7 +306,7 @@ client:
           icon: database
           children:
             - { name: volumes, title: Volumes }
-            - { name: volume-snapshots, title: Snapshots, authKey: volumes }
+            - { name: volume-snapshots, title: Snapshots }
         - name: config
           title: Configuration Center
           icon: hammer

@@ -156,7 +156,7 @@ export default class GlobalValue {
       return false
     }
 
-    if (item.admin && globals.user.globalrole !== 'platform-admin') {
+    if (item.admin && !globals.app.isPlatformAdmin) {
       return false
     }
 
@@ -180,6 +180,8 @@ export default class GlobalValue {
         child.cluster = cluster
         return this.checkNavItem(child, callback)
       })
+
+      delete item._children
 
       return item.children.length > 0
     }

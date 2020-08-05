@@ -138,9 +138,7 @@ export default class VolumeDetail extends React.Component {
         false
       ),
       onClick: () => {
-        this.trigger('volume.clone', {
-          store: this.store,
-        })
+        this.trigger('volume.clone', {})
       },
     },
     {
@@ -155,9 +153,7 @@ export default class VolumeDetail extends React.Component {
         false
       ),
       onClick: () => {
-        this.trigger('volume.create.snapshot', {
-          store: this.store,
-        })
+        this.trigger('volume.create.snapshot', {})
       },
     },
     {
@@ -176,7 +172,6 @@ export default class VolumeDetail extends React.Component {
         const storageClassSizeConfig = this.storageclass.getStorageSizeConfig()
 
         this.trigger('volume.expand', {
-          store: this.store,
           isExpanding: isSubmitting,
           shouldAlertVisible: detail.inUse,
           detail: originData,
@@ -279,6 +274,7 @@ export default class VolumeDetail extends React.Component {
       module: this.module,
       authKey: this.authKey,
       name: getDisplayName(this.store.detail),
+      desc: this.store.detail.description,
       attrs: this.getAttrs(),
       operations: this.isFedManaged ? [] : this.getOperations(),
       icon: 'storage',

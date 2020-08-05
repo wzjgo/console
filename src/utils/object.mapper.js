@@ -20,14 +20,17 @@ import {
   get,
   set,
   has,
+  merge,
   pick,
   isEmpty,
   omit,
+  omitBy,
   uniqBy,
   find,
   keyBy,
   includes,
   cloneDeep,
+  isUndefined,
 } from 'lodash'
 import {
   safeParseJSON,
@@ -43,6 +46,7 @@ import { getServiceType } from 'utils/service'
 import { getNodeRoles } from 'utils/node'
 import { getPodStatusAndRestartCount } from 'utils/status'
 import { FED_ACTIVE_STATUS } from 'utils/constants'
+import moment from 'moment-mini'
 
 const getOriginData = item =>
   omit(item, [
@@ -397,16 +401,26 @@ const PodsMapper = item => ({
   _originData: getOriginData(item),
 })
 
-const EventsMapper = item => ({
-  ...getBaseInfo(item),
-  type: get(item, 'type'),
-  reason: get(item, 'reason'),
-  message: get(item, 'message'),
-  startTime: get(item, 'firstTimestamp') || get(item, 'creationTimestamp'),
-  endTime: get(item, 'lastTimestamp'),
-  source: get(item, 'source.component'),
-  _originData: getOriginData(item),
-})
+const EventsMapper = item => {
+  const now = Date.now()
+  const age =
+    item.count > 1
+      ? `${moment(item.lastTimestamp).to(now, true)} (x${
+          item.count
+        } over ${moment(item.firstTimestamp).to(now, true)})`
+      : moment(item.firstTimestamp).to(now, true)
+
+  return {
+    ...getBaseInfo(item),
+    age,
+    type: get(item, 'type'),
+    reason: get(item, 'reason'),
+    message: get(item, 'message'),
+    from: get(item, 'source.component'),
+    lastTimestamp: item.lastTimestamp,
+    _originData: getOriginData(item),
+  }
+}
 
 const getVolumePhase = item => {
   const phase = get(item, 'status.phase')
@@ -456,11 +470,11 @@ const StorageClassMapper = item => ({
   default:
     get(
       item,
-      'metadata.annotations["storageclass.kubernetes.io/is-default-class"]',
-      get(
-        item,
-        'metadata.annotations["storageclass.beta.kubernetes.io/is-default-class"]'
-      )
+      'metadata.annotations["storageclass.kubernetes.io/is-default-class"]'
+    ) === 'true' ||
+    get(
+      item,
+      'metadata.annotations["storageclass.beta.kubernetes.io/is-default-class"]'
     ) === 'true',
   parameters: get(item, 'parameters'),
   provisioner: get(item, 'provisioner'),
@@ -1056,6 +1070,7 @@ const ClusterMapper = item => {
 }
 
 const FederatedMapper = resourceMapper => item => {
+  const baseInfo = getBaseInfo(item)
   const overrides = get(item, 'spec.overrides', [])
   const template = get(item, 'spec.template', {})
   const clusters = get(item, 'spec.placement.clusters', [])
@@ -1071,14 +1086,19 @@ const FederatedMapper = resourceMapper => item => {
     }
   })
 
+  const resourceInfo = omitBy(
+    resourceMapper(merge(template, { metadata: item.metadata })),
+    isUndefined
+  )
+
   return {
-    ...getBaseInfo(item),
+    ...resourceInfo,
+    ...baseInfo,
     overrides,
     template,
     clusters,
     clusterTemplates,
     isFedManaged: true,
-    resource: resourceMapper(template),
     namespace: get(item, 'metadata.namespace'),
     labels: get(item, 'metadata.labels', {}),
     annotations: get(item, 'metadata.annotations', {}),
@@ -1096,6 +1116,8 @@ const DevOpsMapper = item => {
 
   return {
     ...getBaseInfo(item),
+    name: get(item, 'metadata.generateName'),
+    devops: get(item, 'metadata.name'),
     workspace: get(item, 'metadata.labels["kubesphere.io/workspace"]'),
     namespace: get(item, 'status.adminNamespace'),
     status: deletionTimestamp ? 'Terminating' : phase || 'Active',

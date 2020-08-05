@@ -87,6 +87,8 @@ export default {
   'Resource requests left quota': '资源预留剩余配额',
   'Resource limits left quota': '资源限制剩余配额',
 
+  'No resource limits': '无资源限制',
+
   'Job Settings': '任务设置',
   'CronJob Settings': '定时任务设置',
   'Job Template': '任务模板',
@@ -292,7 +294,7 @@ export default {
   CRONJOBS_VOLUME_DESC:
     '可以将临时存储卷，持久化存储卷挂载至定时任务的容器组内。',
   CRONJOB_CRON_DESC:
-    '按照给定的时间计划运行工作。语法参照 <a href="//en.wikipedia.org/wiki/Cron" target="_blank">CRON</a>',
+    '按照给定的时间计划运行工作。语法参照 <a href="//en.wikipedia.org/wiki/Cron" target="_blank">CRON</a>。Kubernetes 默认使用 UTC 时间, 请注意根据时区调整定时计划。',
 
   MOUNT_VOLUME_DESC:
     '持久化存储卷请选择支持多节点读写模式 (ROX 或者 RWX) 的存储卷，否则可能因容器组不在同一节点导致容器组更新失败。如果您选择了单节点读写 (RWO) 模式的存储卷您也可以通过节点选择将容器组安排在同一节点上来避免因存储卷访问模式造成的更新错误。',

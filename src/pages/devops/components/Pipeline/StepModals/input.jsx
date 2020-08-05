@@ -25,7 +25,7 @@ import { Form, Modal } from 'components/Base'
 import { Mention, Alert } from '@pitrix/lego-ui'
 import MentionsInput from '@pitrix/lego-ui/lib/components/Mention/MentionsInput'
 
-import DevopsStore from 'stores/devops'
+import UserStore from 'stores/user'
 
 import styles from './index.scss'
 
@@ -43,7 +43,7 @@ export default class InputStep extends React.Component {
 
   constructor(props) {
     super(props)
-    this.devopsStore = new DevopsStore()
+    this.memberStore = new UserStore()
     const { value, submitter } = this.getDefaultData()
     this.state = { loading: false, value, submitter }
   }
@@ -51,9 +51,15 @@ export default class InputStep extends React.Component {
   handleMessageChange = e => {
     this.setState({
       value: e.target.value,
-      submitter: uniq(
-        (this.state.value.match(/@([\w-.]*)?/g) || []).map(str => str.slice(1))
-      ),
+    })
+  }
+
+  handleMessageSubmitter = () => {
+    const submitter = uniq(
+      (this.state.value.match(/@([\w-.]*)?/g) || []).map(str => str.slice(1))
+    )
+    this.setState({
+      submitter,
     })
   }
 
@@ -61,13 +67,14 @@ export default class InputStep extends React.Component {
     const { edittingData } = this.props
     let value = ''
     let submitter = []
+    const editData = toJS(edittingData)
 
     if (
-      !isEmpty(edittingData) &&
-      !isEmpty(edittingData.data) &&
-      isArray(edittingData.data)
+      !isEmpty(editData) &&
+      !isEmpty(editData.data) &&
+      isArray(editData.data)
     ) {
-      edittingData.data.forEach(param => {
+      editData.data.forEach(param => {
         if (param.key === 'message') {
           value = param.value.value
         }
@@ -91,17 +98,19 @@ export default class InputStep extends React.Component {
   }
 
   getUsers = () => {
+    const { devops, cluster } = this.props
     this.setState({ loading: true })
-    this.devopsStore
-      .fetchMembers({ project_id: this.props.project_id })
+    this.memberStore
+      .fetchList({
+        devops,
+        cluster,
+      })
       .then(result => {
         this.setState({ loading: false })
-
-        if (!result.items) {
+        if (isEmpty(result)) {
           return []
         }
-
-        return result.items
+        return result
           .map(user => ({
             id: user.username,
             display: user.username,
@@ -162,6 +171,7 @@ export default class InputStep extends React.Component {
             <MentionsInput
               value={this.state.value}
               onChange={this.handleMessageChange}
+              onBlur={this.handleMessageSubmitter}
               placeholder={t('Can @somebody to help review')}
               markup="@__id__ "
               displayTransform={id => `@${id}`}

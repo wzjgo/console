@@ -20,7 +20,7 @@ import React from 'react'
 import { Columns, Column, Input, TextArea } from '@pitrix/lego-ui'
 import { Form } from 'components/Base'
 import Title from 'components/Forms/Base/Title'
-import { PATTERN_PIPELINE_NAME } from 'utils/constants'
+import { PATTERN_NAME } from 'utils/constants'
 
 import RepoSelect from '../RepoSelect'
 import RepoSelectForm from '../RepoSelect/subForm'
@@ -73,7 +73,7 @@ export default class BaseInfo extends React.Component {
       .checkPipelineName({
         name: value,
         cluster: this.props.cluster,
-        project_name: this.props.formTemplate.project_name,
+        devops: this.props.devops,
       })
       .then(resp => {
         if (resp.exist) {
@@ -87,11 +87,11 @@ export default class BaseInfo extends React.Component {
   }
 
   renderRepoSelectForm() {
-    const { formTemplate, project_id, cluster } = this.props
+    const { formTemplate, devops, cluster } = this.props
     return (
       <RepoSelectForm
         sourceData={formTemplate['multi_branch_pipeline']}
-        project_id={project_id}
+        devops={devops}
         name={formTemplate.name}
         cluster={cluster}
         onSave={this.handleRepoChange}
@@ -124,8 +124,8 @@ export default class BaseInfo extends React.Component {
                 rules={[
                   { required: true, message: t('Please input pipeline name') },
                   {
-                    pattern: PATTERN_PIPELINE_NAME,
-                    message: t('PATTERN_PIPELINE_NAME_VALID_NAME_TIP'),
+                    pattern: PATTERN_NAME,
+                    message: `${t('Invalid name')}, ${t('NAME_DESC')}`,
                   },
                   { validator: this.validator },
                 ]}
@@ -150,7 +150,7 @@ export default class BaseInfo extends React.Component {
                   ref={this.scmRef}
                   onClick={this.showSelectRepo}
                   handleDeleteSource={this.handleDeleteSource}
-                  project_id={this.props.project_id}
+                  devops={this.props.devops}
                 />
               </Form.Item>
             </Column>

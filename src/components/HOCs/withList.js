@@ -19,7 +19,7 @@
 import React from 'react'
 import { reaction, toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
-import { isEmpty, throttle } from 'lodash'
+import { isEmpty, debounce } from 'lodash'
 import { parse } from 'qs'
 import isEqual from 'react-fast-compare'
 import { MODULE_KIND_MAP } from 'utils/constants'
@@ -84,7 +84,7 @@ export default function withList(options) {
           module: this.authKey,
           ...this.props.match.params,
           project: this.props.match.params.namespace,
-          devops: this.props.match.params.project_id,
+          devops: this.props.match.params.devops,
         })
       }
 
@@ -266,7 +266,7 @@ export class ListPage extends React.Component {
 
       this.websocket.watch(url)
 
-      const _getData = throttle(query => {
+      const _getData = debounce(query => {
         if (this.store.list.isLoading) {
           return
         }
@@ -295,7 +295,7 @@ export class ListPage extends React.Component {
               }
               this.store.list.updateItem(data)
             } else if (message.type === 'DELETED' || message.type === 'ADDED') {
-              _getData(isFederated ? { page: 1 } : {})
+              _getData()
             }
           }
         }

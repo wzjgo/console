@@ -7,7 +7,7 @@
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title><%- title %></title>
+    <title><%= title %></title>
     <link rel="icon" href="/assets/favicon.ico" type="image/x-icon" />
     <link
       href="/assets/fonts/Roboto/stylesheet.css"
@@ -25,36 +25,36 @@
       <img src="/assets/logo.svg" alt="" />
     </a>
     <div class="login">
-      <div class="login-form <%- error ? 'login-form-error' : '' %>">
-        <div class="login-header"><%- t('Please Log In') %></div>
+      <div class="login-form <%= error ? 'login-form-error' : '' %>">
+        <div class="login-header"><%= t('Please Log In') %></div>
         <div class="login-divider"></div>
         <% if (oauthServers) { %> <% oauthServers.forEach(function(server) { %>
-        <div class="login-oauth" data-url="<%- server.url %>">
-          <span><%- t('Log In with %s', server.title) %></span>
+        <div class="login-oauth" data-url="<%= server.url %>">
+          <span><%= t('Log In with %s', server.title) %></span>
         </div>
         <% }) %> <% } %> <% if (error) { %>
         <div class="login-error">
-          <span><%- t(error.message) %></span>
+          <span><%= t(error.message) %></span>
         </div>
         <% } %>
-        <form action="<%- loginPath %>" method="post">
+        <form action="<%= loginPath %>" method="post">
           <div class="login-form-item">
-            <label for="username"><%- t('Username or Email') %>:</label>
+            <label for="username"><%= t('Username or Email') %>:</label>
             <input
               type="text"
               id="username"
               name="username"
               placeholder="User@example.com"
+              autofocus
               required
             />
           </div>
           <div class="login-form-item">
-            <label for="password"><%- t('Password') %>:</label>
+            <label for="password"><%= t('Password') %>:</label>
             <div style="position: relative">
               <input
                 type="password"
                 id="password"
-                name="password"
                 placeholder="Password"
                 required
               />
@@ -66,27 +66,27 @@
           </div>
           <% if (errorCount > 2) { %>
           <div class="login-form-item">
-            <label for="captcha"><%- t('Captcha')%>:</label>
+            <label for="captcha"><%= t('Captcha')%>:</label>
             <div class="captcha-wrapper">
               <img
                 id="captcha_img"
-                src="/captcha?<%- new Date().getTime() %>"
+                src="/captcha?<%= new Date().getTime() %>"
                 alt=""
               />
-              <a id="refresh_captcha"><%- t('Reload Captcha') %></a>
+              <a id="refresh_captcha"><%= t('Reload Captcha') %></a>
               <input
                 type="text"
                 id="captcha"
                 name="captcha"
-                placeholder="<%- t('Captcha') %>"
+                placeholder="<%= t('Captcha') %>"
                 required
               />
             </div>
           </div>
           <% } %>
           <div class="submit">
-            <button type="submit" disabled>
-              <span><%- t('Log In') %></span>
+            <button type="submit">
+              <span><%= t('Log In') %></span>
               <svg>
                 <use xlink:href="#loading" />
               </svg>
@@ -97,9 +97,8 @@
     </div>
     <script>
       ;(function() {
-        var salt = '<%- salt %>'
+        var salt = '<%= salt %>'
 
-        var $form = document.querySelector('.login-form')
         var $errorForm = document.querySelector('.login-form-error')
         var $password = document.querySelector('#password')
         var $encryptPassword = document.querySelector('#encrypt')
@@ -118,22 +117,11 @@
         ready(init)
 
         function init() {
-          $form && $form.addEventListener('input', formHandler)
           $errorForm && $errorForm.addEventListener('keydown', errorFormHandler)
           $passwordShowTrigger.addEventListener('click', passwordHandler)
           $submitBtn.addEventListener('click', submitHandler)
           $refresh_captcha &&
             $refresh_captcha.addEventListener('click', refreshCaptha)
-
-          if (isFirefox) {
-            if ($submitBtn && $submitBtn.disabled) {
-              $submitBtn.disabled = false
-            }
-          } else {
-            detectAutoFill()
-          }
-
-          $username.focus()
 
           Array.prototype.forEach.call($oauthBtns, function(el) {
             el.addEventListener('click', handleOAuthLogin)
@@ -157,43 +145,11 @@
           }
         }
 
-        function detectAutoFill() {
-          const AUTOFILLED = 'is-autofilled'
-          const onAutoFillStart = el => el.classList.add(AUTOFILLED)
-          const onAutoFillCancel = el => el.classList.remove(AUTOFILLED)
-          const onAnimationStart = ({ target, animationName }) => {
-            switch (animationName) {
-              case 'onAutoFillStart':
-                return onAutoFillStart(target)
-              case 'onAutoFillCancel':
-                return onAutoFillCancel(target)
-            }
-          }
-
-          document
-            .querySelector('input')
-            .addEventListener('animationstart', animationStartHandle)
-        }
-
-        function animationStartHandle() {
-          if ($submitBtn && $submitBtn.disabled) {
-            $submitBtn.disabled = false
-          }
-
-          document
-            .querySelector('input')
-            .removeEventListener('animationstart', animationStartHandle)
-        }
-
         function errorFormHandler() {
           if ($username.value && $password.value) {
             $errorForm.removeEventListener('keydown', errorFormHandler)
             $errorForm.classList.remove('login-form-error')
           }
-        }
-
-        function formHandler() {
-          checkSubmitValid()
         }
 
         function passwordHandler() {
@@ -203,26 +159,6 @@
           } else {
             $password.type = 'password'
             $passwordIcon.setAttribute('xlink:href', '#eye')
-          }
-        }
-
-        function checkSubmitValid() {
-          if (
-            $submitBtn &&
-            $submitBtn.disabled &&
-            $username.value &&
-            $password.value &&
-            (!$captcha || $captcha.value)
-          ) {
-            $submitBtn.disabled = false
-          } else if (
-            $submitBtn &&
-            !$submitBtn.disabled &&
-            (!$username.value ||
-              !$password.value ||
-              ($captcha && !$captcha.value))
-          ) {
-            $submitBtn.disabled = true
           }
         }
 
@@ -257,7 +193,6 @@
           ) {
             $submitBtn.classList.add('loading')
             $encryptPassword.value = encrypt($password.value)
-            $password.setAttribute('form', 'deniedform')
             setTimeout(function() {
               $submitBtn.disabled = true
             }, 0)

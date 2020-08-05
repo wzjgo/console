@@ -293,6 +293,7 @@ export default {
   'Service Settings': 'Configuraciones de servicio',
   'Session timeout or this account is logged in elsewhere, please login again':
     'Timeout de sesión o se ha iniciado sesión con esta cuenta en otro lugar, vuelve a iniciar sesión',
+  Set: 'Set',
   Setting: 'Ajuste',
   Settings: 'Configuraciones',
   Size: 'Tamaño',
@@ -416,7 +417,7 @@ export default {
   REMOVE_MEMBER_TIP:
     '¿Estás seguro de que deseas eliminar el miembro <strong>{resource}</strong> ?',
   ALIAS_DESC:
-    'El alias puede estar compuesto de cualquier carácter para ayudar a distinguir mejor los recursos.',
+    'El alias puede estar compuesto de cualquier carácter para ayudar a distinguir mejor los recursos. La longitud máxima de carácteres se establece en 63.',
   NOT_ENABLE: '{feature} no está habilitado',
   NOT_AVAILABLE: '{resource} no disponible',
   NO_RESOURCE: 'No se encuentra {resource}',
@@ -516,4 +517,7 @@ export default {
   API_DOCS_DESC: 'La documentación más completa de la API de KubeSphere.',
   GITHUB_ISSUES_DESC:
     'Puedes plantear un problema en GitHub para obtener ayuda.',
+
+  EVENT_AGE: 'Age',
+  EVENT_FROM: 'From',
 }

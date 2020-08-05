@@ -292,6 +292,7 @@ export default {
   'Service Settings': 'Service Settings',
   'Session timeout or this account is logged in elsewhere, please login again':
     'Session timeout or this account is logged in elsewhere, please login again',
+  Set: 'Set',
   Setting: 'Setting',
   Settings: 'Settings',
   Size: 'Size',
@@ -421,7 +422,7 @@ export default {
     'Are you sure about removing the member <strong>{resource}</strong> ?',
 
   ALIAS_DESC:
-    'Alias can be composed of any character to help you better distinguish resources.',
+    'Alias can be composed of any character to help you better distinguish resources. The maximum length of characters is set to 63.',
 
   NOT_ENABLE: '{resource} is not enabled',
   NOT_AVAILABLE: 'No available {resource}',
@@ -518,6 +519,9 @@ export default {
 
   EVENT_SEARCH_DESC:
     'A multi-dimensional event search tool for workspaces, projects and resources.',
+
+  EVENT_AGE: 'Age',
+  EVENT_FROM: 'From',
 
   PLATFORM_INFO_DESC: 'View platform title, description and other information',
   HOW_TO_MODIFY_PLATFORM_INFO: 'How to modify platform info?',

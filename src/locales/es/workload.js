@@ -194,6 +194,7 @@ export default {
     'No se encontraron recursos relacionados con las cargas de trabajo actuales',
   'No related resources': 'No hay recursos relacionados.',
   'No Request': 'Ninguna solicitud',
+  'No resource limits': 'No resource limits',
   'Node IP': 'IP de nodo',
   'Node Name': 'Nombre del nodo',
   'Node Scheduling Info': 'Información de programación de nodos',
@@ -434,8 +435,6 @@ export default {
   IMAGE_DESC:
     'Para implementar desde un repositorio de imágenes privado, primero debe <a href={link} target="_blank">crear un secreto de registro de imágenes</a> y luego extraer la imagen.',
   REPLICAS_DESC: 'Se creará el número deseado de pods para el {módulo}.',
-  VOLUME_DESC:
-    'Un volumen es un PVC (PersistentVolumeClaim) creado mediante el aprovisionamiento dinámico de volumen.',
   VOLUME_SUB_TEXT:
     'Volúmenes utilizados por los contenedores de la carga de trabajo.',
   EMPTYDIR_DESC: 'Almacenamiento temporal creado para la carga de trabajo.',
@@ -499,7 +498,7 @@ export default {
   CRONJOBS_VOLUME_DESC:
     'Puede montar volúmenes temporales o volúmenes persistentes en un Pod del cronjob.',
   CRONJOB_CRON_DESC:
-    'Ejecuta un trabajo periódicamente en un horario determinado. Consulte <a href="//en.wikipedia.org/wiki/Cron" target="_blank">CRON</a> para referencia gramatical.',
+    'Ejecuta un trabajo periódicamente en un horario determinado. Consulte <a href="//en.wikipedia.org/wiki/Cron" target="_blank">CRON</a> para referencia gramatical. By default, Kubernetes adopts UTC. Please adjust scheduled plans based on the time zone.',
   START_DEADLINE_SECONDS_DESC:
     'Una fecha límite opcional en segundos para comenzar el trabajo si se pierde el tiempo programado por cualquier motivo.',
   VOLUME_EMPTY_TIP: 'No hay volúmenes creados',

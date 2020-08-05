@@ -31,6 +31,10 @@ export default {
   'Authorization Settings': 'Authorization Settings',
   'Authorized Actions': 'Authorized Actions',
   'Authorized Users': 'Authorized Users',
+  'ConfigMaps Management': 'ConfigMaps Management',
+  'ConfigMaps View': 'ConfigMaps View',
+  'Custom Monitoring View': 'Custom Monitoring View',
+  'Custom Monitoring Management': 'Custom Monitoring Management',
   Cluster: 'Cluster',
   'Cluster Members Management': 'Cluster Members Management',
   'Cluster Members View': 'Cluster Members View',
@@ -226,8 +230,9 @@ export default {
   ACCOUNT_ROLE_CREATE_DESC:
     'Account roles define the authorization an account has in the platform.',
   PIPELINES_MANAGEMENT_DESC:
-    'Manage DevOps project pipeline, including creating, editing and deleting',
-  PIPELINES_VIEW_DESC: 'View DevOps project pipeline and download artifacts',
+    'Grant permission to manage DevOps project pipelines, including creating, editing and deleting pipelines',
+  PIPELINES_VIEW_DESC:
+    'Grant permission to view DevOps project pipelines and download artifacts',
   CREDENTIALS_MANAGEMENT_DESC:
     'Manage project credentials, including creating, editing and deleting',
   CREDENTIALS_VIEW_DESC: 'View and use credentials',
@@ -237,7 +242,7 @@ export default {
   DEVOPS_MEMBERS_VIEW_DESC: 'View DevOps project members',
   DEVOPS_MEMBERS_MANAGEMENT_DESC: 'Invite/edit/remove DevOps project members',
   DEVOPS_SETTINGS_DESC:
-    'Manage DevOps project settings and edit DevOps project information',
+    'Grant permission to manage DevOps project settings and edit DevOps project information',
 
   CLUSTER_MEMBERS_MANAGEMENT_DESC: 'Invite/edit/remove cluster members',
   CLUSTER_MEMBERS_VIEW_DESC: 'View cluster members',
@@ -251,7 +256,7 @@ export default {
   STORAGECLASSES_VIEW_DESC: 'View all storage classes in the cluster',
   STORAGECLASSES_MANAGEMENT_DESC:
     'Create/edit/delete storage classes and set the default storage class',
-  VOLUME_SNAPSHOTS_VIEW_DESC: 'View all volume snapshots in the cluster',
+  VOLUME_SNAPSHOTS_VIEW_DESC: 'View all volume snapshots',
   VOLUME_SNAPSHOTS_MANAGEMENT_DESC: 'Create/edit/delete volume snapshots',
   CLUSTER_MONITORING_VIEW_DESC:
     'View cluster physical resources and monitoring data of application resources',
@@ -265,8 +270,13 @@ export default {
   SECRETS_VIEW_DESC: 'Grant permission to view project secrets',
   SECRETS_MANAGEMENT_DESC:
     'Grant permission to create/edit/delete project secrets',
+  CONFIGMAPS_VIEW_DESC: 'Grant permission to view project configmaps',
+  CONFIGMAPS_MANAGEMENT_DESC:
+    'Grant permission to create/edit/delete project configmaps',
 
-  CUSTOM_MONITORING_DESC:
+  CUSTOM_MONITORING_VIEW_DESC:
+    'Grant permission to view custom monitoring data',
+  CUSTOM_MONITORING_MANAGEMENT_DESC:
     'Grant permission to create and manage custom monitoring data',
 
   ALERTING_POLICIES_VIEW_DESC: 'Grant permission to view alerting policies',
@@ -283,7 +293,7 @@ export default {
   PROJECT_MEMBERS_MANAGEMENT_DESC:
     'Grant permission to invite/edit/remove project members',
   PROJECT_SETTINGS_DESC:
-    'Manage project settings and edit project information, including Internet access, network policies, resource quota, and disk log collection and configuration',
+    'Grant permission to manage project settings and edit project information, including Internet access, network policies, resource quota, and disk log collection and configuration',
   PROJECTS_MANAGEMENT_DESC:
     'Grant permission to manage all projects in the workspace, including creating/editing/deleting projects',
   PROJECTS_CREATE_DESC:

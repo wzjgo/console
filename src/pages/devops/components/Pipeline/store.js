@@ -17,8 +17,9 @@
  */
 
 import { action, observable, computed, toJS } from 'mobx'
-import { get, set, unset } from 'lodash'
+import { get, set, unset, isObject, isEmpty } from 'lodash'
 import { Message } from '@pitrix/lego-ui'
+import Notify from 'components/Base/Notify'
 
 import CredentialStore from 'stores/devops/credential'
 import BaseStore from 'stores/devops/base'
@@ -44,6 +45,11 @@ const formatPipeLineJson = json => {
     delete stage.isActive
     return stage
   })
+
+  if (isObject(json.pipeline.parameters) && isEmpty(json.pipeline.parameters)) {
+    delete json.pipeline.parameters
+  }
+
   return json
 }
 
@@ -136,9 +142,9 @@ export default class Store extends BaseStore {
   }
 
   handleSetInLocalStorage() {
-    const { project_id, name } = this.params
+    const { devops, name } = this.params
     this.prevData = localStorage.setItem(
-      `${globals.user.username}-${project_id}-${name}`,
+      `${globals.user.username}-${devops}-${name}`,
       JSON.stringify(toJS(this.jsonData))
     )
   }
@@ -277,8 +283,13 @@ export default class Store extends BaseStore {
             const loacationArr = error.location.join('.').split('.branches')
             // can't find location
             const errorObj = get(this.jsonData.json, loacationArr[0])
-            if (errorObj && errorObj.length !== undefined) {
+            if (errorObj && !isEmpty(errorObj)) {
               Message.error({ content: error.error })
+              Notify.error({
+                title: t('pipeline syntax error'),
+                content: t(error.error),
+                duration: 6000,
+              })
               return
             }
 
@@ -321,7 +332,7 @@ export default class Store extends BaseStore {
   getCredentials = async () => {
     this.isCredentialLoading = true
     const result = await this.credentialStore.fetchList({
-      project_id: this.params.project_id,
+      devops: this.params.devops,
       cluster: this.params.cluster,
     })
 

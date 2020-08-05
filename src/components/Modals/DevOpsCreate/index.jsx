@@ -136,7 +136,7 @@ export default class ProjectCreateModal extends React.Component {
 
   handleClusterChange = () => {
     if (this.nameRef && this.nameRef.current) {
-      const name = 'metadata.name'
+      const name = 'metadata.generateName'
       if (
         this.formRef &&
         this.formRef.current &&
@@ -188,12 +188,19 @@ export default class ProjectCreateModal extends React.Component {
                   { validator: this.nameValidator },
                 ]}
               >
-                <Input name="metadata.name" autoFocus={true} maxLength={63} />
+                <Input
+                  name="metadata.generateName"
+                  autoFocus={true}
+                  maxLength={63}
+                />
               </Form.Item>
             </Column>
             <Column>
               <Form.Item label={t('Alias')} desc={t('ALIAS_DESC')}>
-                <Input name="metadata.annotations['kubesphere.io/alias-name']" />
+                <Input
+                  name="metadata.annotations['kubesphere.io/alias-name']"
+                  maxLength={63}
+                />
               </Form.Item>
             </Column>
           </Columns>

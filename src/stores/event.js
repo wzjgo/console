@@ -43,7 +43,7 @@ export default class EventsStore {
     )
 
     this.list = {
-      data: orderBy(result.items.map(ObjectMapper.events), 'startTime', 'desc'),
+      data: orderBy(result.items.map(ObjectMapper.events), 'lastTimestamp'),
       total: result.items.length,
       isLoading: false,
     }

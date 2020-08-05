@@ -16,7 +16,7 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { set, get, isArray, omit } from 'lodash'
+import { set, get, isArray, omit, cloneDeep } from 'lodash'
 import { action, observable } from 'mobx'
 
 import Base from 'stores/base'
@@ -46,10 +46,10 @@ export default class DevOpsStore extends Base {
   devopsListData = []
 
   @observable
-  project_id = ''
+  devops = ''
 
   @observable
-  devops = ''
+  devopsName = ''
 
   getPath({ cluster, namespace, workspace } = {}) {
     let path = ''
@@ -92,8 +92,8 @@ export default class DevOpsStore extends Base {
   getWatchUrl = (params = {}) =>
     `${this.getWatchListUrl(params)}/${params.name}`
 
-  getDevops(project_id) {
-    return project_id.slice(0, -5)
+  getDevops(devops) {
+    return devops.slice(0, -5)
   }
 
   @action
@@ -148,34 +148,26 @@ export default class DevOpsStore extends Base {
   }
 
   @action
-  update({ cluster, workspace, name }, item, isBaseInfoEditor = false) {
-    let data = null
-    if (isBaseInfoEditor) {
-      data = this.itemDetail
-    } else {
-      const result = this.devopsListData.filter(
-        v => v.metadata.uid === item.uid
-      )
-
-      data = result.length > 0 ? result[0] : null
-    }
+  async update({ cluster, workspace, devops }, newData) {
+    await this.fetchDetail({ cluster, workspace, devops })
+    const data = cloneDeep(this.itemDetail)
 
     if (data) {
-      data = set(
+      set(
         data,
         'metadata.annotations["kubesphere.io/description"]',
-        item.description
+        newData.description
       )
 
-      data = set(
+      set(
         data,
         'metadata.annotations["kubesphere.io/alias-name"]',
-        item.aliasName
+        newData.aliasName
       )
 
       return this.submitting(
         request.put(
-          `${this.getDevOpsDetailUrl({ cluster, workspace, devops: name })}`,
+          `${this.getDevOpsDetailUrl({ cluster, workspace, devops })}`,
           data,
           {
             headers: {
@@ -188,26 +180,26 @@ export default class DevOpsStore extends Base {
   }
 
   @action
-  delete({ name, cluster, workspace }) {
+  delete({ devops, cluster, workspace }) {
     return this.submitting(
       request.delete(
-        `${this.getDevOpsDetailUrl({ workspace, cluster, devops: name })}`
+        `${this.getDevOpsDetailUrl({ workspace, cluster, devops })}`
       )
     )
   }
 
   @action
   batchDelete(rowKeys, params) {
-    const { workspace, cluster, name } = params
+    const { workspace, cluster, devops } = params
     return this.submitting(
       Promise.all(
-        rowKeys.map(project_id =>
+        rowKeys.map(devopsName =>
           request.delete(
             `${this.getDevOpsDetailUrl({
               workspace,
               cluster,
-              devops: name,
-            })}/${project_id}`
+              devops: this.list.find(value => value.name === devopsName).devops,
+            })}/${devops}`
           )
         )
       )
@@ -215,8 +207,7 @@ export default class DevOpsStore extends Base {
   }
 
   @action
-  async fetchDetail({ cluster, project_id, workspace }) {
-    const devops = this.getDevops(project_id)
+  async fetchDetail({ cluster, devops, workspace }) {
     const detail = await request.get(
       this.getDevOpsDetailUrl({ workspace, cluster, devops }),
       null,
@@ -230,17 +221,17 @@ export default class DevOpsStore extends Base {
 
     this.itemDetail = detail
     const data = { cluster, ...this.mapper(detail) }
-    this.devops = data.name
-    this.project_id = data.namespace
+    this.devopsName = data.name
+    this.devops = data.devops
     data.workspace = data.workspace || workspace
     this.data = data
   }
 
   @action
-  async fetchRoles({ cluster, project_id }) {
+  async fetchRoles({ cluster, devops }) {
     this.roles.isLoading = true
     const result = await request.get(
-      `${this.getListUrl({ cluster })}/${project_id}/defaultroles`
+      `${this.getListUrl({ cluster })}/${devops}/defaultroles`
     )
     if (isArray(result)) {
       this.roles.data = result.map(role => {
@@ -255,5 +246,51 @@ export default class DevOpsStore extends Base {
   @action
   setSelectRowKeys = selectedRowKeys => {
     this.list.selectedRowKeys = selectedRowKeys
+  }
+
+  @action
+  async fetchListByUser({
+    cluster,
+    workspace,
+    namespace,
+    username,
+    type,
+    ...params
+  } = {}) {
+    this.list.isLoading = true
+
+    if (!params.sortBy && params.ascending === undefined) {
+      params.sortBy = 'createTime'
+    }
+
+    if (params.limit === Infinity || params.limit === -1) {
+      params.limit = -1
+      params.page = 1
+    }
+
+    params.limit = params.limit || 10
+
+    const result = await request.get(
+      `kapis/tenant.kubesphere.io/v1alpha2/workspaces/${workspace}${this.getPath(
+        { cluster, namespace }
+      )}/workspacemembers/${username}/devops`,
+      params
+    )
+    const data = get(result, 'items', []).map(item => ({
+      cluster,
+      ...this.mapper(item),
+    }))
+
+    this.list.update({
+      data,
+      total: result.totalItems || 0,
+      ...params,
+      cluster: globals.app.isMultiCluster ? cluster : undefined,
+      limit: Number(params.limit) || 10,
+      page: Number(params.page) || 1,
+      isLoading: false,
+    })
+
+    return data
   }
 }

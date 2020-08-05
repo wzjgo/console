@@ -156,6 +156,7 @@ export default class ProjectCreateModal extends React.Component {
             name="cluster"
             className={styles.cluster}
             options={this.clusters}
+            defaultValue={this.props.defaultCluster}
             valueRenderer={this.valueRenderer}
             optionRenderer={this.optionRenderer}
             onChange={this.handleClusterChange}
@@ -215,7 +216,10 @@ export default class ProjectCreateModal extends React.Component {
             </Column>
             <Column>
               <Form.Item label={t('Alias')} desc={t('ALIAS_DESC')}>
-                <Input name="metadata.annotations['kubesphere.io/alias-name']" />
+                <Input
+                  name="metadata.annotations['kubesphere.io/alias-name']"
+                  maxLength={63}
+                />
               </Form.Item>
             </Column>
           </Columns>
